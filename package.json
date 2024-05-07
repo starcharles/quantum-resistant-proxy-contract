@@ -6,6 +6,7 @@
   "author": "naoto <stardustforever012@gmail.com>",
   "license": "MIT",
   "scripts": {
+    "run:node": "npx hardhat node",
     "test": "npx hardhat test",
     "compile": "npx hardhat compile"
   },

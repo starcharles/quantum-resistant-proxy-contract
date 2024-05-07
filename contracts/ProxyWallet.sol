@@ -7,17 +7,18 @@ contract Proxy {
     string public name = "Proxy";
     address public implementation;
 
-    event Upgraded(address indexed contractAddress);
+    event UpgradedAtProxy(address indexed contractAddress);
 
     function getName() public view returns (string memory) {
         return name;
     }
 
-    function upgradeTo(address contractAddress) public {
+    function upgradeTo(address contractAddress) public returns (bool) {
         console.log("proxy.upgradeTo(contractAddress) is called.");
         console.log("Start changing delegateAddress:%s to address:%s", implementation, contractAddress);
         implementation = contractAddress;
-        emit Upgraded(contractAddress);
+        emit UpgradedAtProxy(contractAddress);
+        return true;
     }
 
 
@@ -40,6 +41,8 @@ contract ProxyWallet {
     string public name = "Wallet";
     address public owner;
     Proxy internal proxy;
+
+    event UpgradedAtWallet(address indexed contractAddress, string PQCSignature);
 
     constructor() {
         owner = msg.sender;
@@ -66,22 +69,19 @@ contract ProxyWallet {
 
     function upgrade(address contractAddress, string memory PQCsignature) external {
         // check if PQCsig is valid
-        require(verifyOwnerByPQCSignature(PQCsignature));
-        console.log("proxy.upgradeContractAddress(contractId, contractAddress) is called.");
+        require(verifyOwnerByPQCSignature(PQCsignature),"Ownable: caller is not the owner");
+        console.log("proxy.upgradeContractAddress(contractAddress) is called.");
         proxy.upgradeTo(contractAddress);
-        console.log("proxy.upgradeContractAddress(contractId, contractAddress) is ended.");
+        console.log("proxy.upgradeContractAddress(contractAddress) is ended.");
+        emit UpgradedAtWallet(contractAddress, PQCsignature);
     }
 
-    // fallback() external {
-    //     assembly {
-    //         calldatacopy(0, 0, calldatasize())
-    //         let result := delegatecall(gas(), proxy.implementation, 0, calldatasize(), 0, 0)
-    //         returndatacopy(0, 0, returndatasize())
-
-    //         switch result
-    //         case 0 { revert(0, returndatasize()) }
-    //         default { return(0, returndatasize()) }
-    //     }
-    // }
+    function delegatecall(address contractAddress, bytes calldata data) external returns (bool) {
+        assembly {
+            calldatacopy(0, 0, calldatasize())
+            let result := delegatecall(gas(), contractAddress, 0, calldatasize(), 0, 0)
+        }
+        return true;
+    }
 }
 
