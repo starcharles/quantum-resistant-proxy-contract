@@ -22,18 +22,21 @@ contract Proxy {
     }
 
 
-    fallback() external {
+    function delegatecall(bytes calldata data) external {
+        console.log("Proxy.delegatecall() is called.");
         address impl = implementation;
 
-        assembly {
-            calldatacopy(0, 0, calldatasize())
-            let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)
-            returndatacopy(0, 0, returndatasize())
+        // return impl.delegatecall(data);
 
-            switch result
-            case 0 { revert(0, returndatasize()) }
-            default { return(0, returndatasize()) }
-        }
+        // assembly {
+        //     calldatacopy(0, 0, calldatasize())
+        //     let result := delegatecall(gas(), impl, 0, calldatasize(), 0, 0)
+        //     returndatacopy(0, 0, returndatasize())
+
+        //     switch result
+        //     case 0 { revert(0, returndatasize()) }
+        //     default { return(0, returndatasize()) }
+        // }
     }
 }
 
@@ -76,7 +79,8 @@ contract ProxyWallet {
         emit UpgradedAtWallet(contractAddress, PQCsignature);
     }
 
-    function delegatecall(address contractAddress, bytes calldata data) external returns (bool) {
+    function delegatecall(address contractAddress) external returns (bool) {
+        // proxy.delegatecall(); 
         assembly {
             calldatacopy(0, 0, calldatasize())
             let result := delegatecall(gas(), contractAddress, 0, calldatasize(), 0, 0)

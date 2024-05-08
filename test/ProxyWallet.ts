@@ -1,12 +1,8 @@
-import {
-  time,
-  loadFixture,
-} from "@nomicfoundation/hardhat-toolbox-viem/network-helpers";
+import { loadFixture } from "@nomicfoundation/hardhat-toolbox-viem/network-helpers";
 import { expect } from "chai";
 import hre from "hardhat";
 import "@nomicfoundation/hardhat-ethers";
-import { getAddress, keccak256, Abi, parseGwei } from "viem";
-import { AbiCoder } from "ethers";
+import { keccak256, bytesToHex, encodePacked, parseGwei } from "viem";
 
 describe("ProxyWallet contract", function () {
   async function deployFixture() {
@@ -82,14 +78,15 @@ describe("ProxyWallet contract", function () {
       const functionSignature = "hello()";
       const encodedFunctionSignature = hre.ethers
         .keccak256(hre.ethers.toUtf8Bytes(functionSignature))
-        .slice(0, 10); // 最初の4バイト（0xを含むため10文字）
+        .slice(0, 8);
 
-      expect(
-        await proxyWallet.write.delegatecall([
-          helloV1.address,
-          `0x${encodedFunctionSignature}`,
-        ])
-      ).to.equal(true);
+      // expect(
+      //   await proxyWallet.write.delegatecall([
+      //     // helloV1.address,
+      //     // `0x${encodedFunctionSignature}`,
+      //   ])
+      // ).to.equal(true);
+      expect(await proxyWallet.write.delegatecall()).to.equal("Hello V1!");
     });
   });
 });
