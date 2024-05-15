@@ -7,6 +7,7 @@
   "license": "MIT",
   "scripts": {
     "run:node": "npx hardhat node",
+    "deploy:proxy-wallet": "npx hardhat ignition deploy ./ignition/modules/ProxyWallet.ts --network localhost",
     "test": "npx hardhat test",
     "compile": "npx hardhat compile"
   },
