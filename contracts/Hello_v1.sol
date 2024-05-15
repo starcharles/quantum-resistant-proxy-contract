@@ -13,7 +13,7 @@ contract Hello_v1 {
         owner = msg.sender;
     }
 
-    function hello() view external returns (string memory) {
+    function hello() pure external returns (string memory) {
         console.log("Hello_v1.hello is called.");
         // emit HelloV1("Hello V1!");
         return "Hello V1!";
