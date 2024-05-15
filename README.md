@@ -1,10 +1,6 @@
-# Proxy-Wallet: proof of concept
+# Proxy-Wallet: Proof of Concepts
 
 ## Setup
-
-```
-npm install -g yarn
-```
 
 ```
 $ yarn install
